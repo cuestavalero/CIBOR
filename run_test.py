@@ -4,7 +4,7 @@
 Program to test the modules to be used in inversions ofsubsurface
 temperature profiles.
 
-Francisco Jose Cuesta-Valero (fjcuestavalero@gmail.com)
+Francisco Jose Cuesta-Valero
 2021-06-23
 """
 import os
@@ -40,7 +40,7 @@ def main(flags):
 
   # Plot the relevant results
   if flags['plot']:
-    plot_inversions()
+    plot_inversions(flags)
 
   return
 
@@ -84,52 +84,58 @@ def run_test_svd():
 
   return
 
-def plot_inversions():
+def plot_inversions(flags):
   tmin = 1600
   tmax = 2021
 
-  file_svd = 'inv_svd.dat'
-  file_ppi = 'inv_ppi.dat'
-  file_bti = 'inv_bti.dat'
+  if flags['svd']:
+    file_svd = 'inv_svd.dat'
+    color_svd = (0/255, 0/255, 204/255)
+    alpha_svd = 0.3
+    svd = read_inversion(file_svd,'temp','svd',tmin,tmax)
+    psvd = create_polygon(svd,color_svd,alpha_svd)
 
-  color_svd = (0/255, 0/255, 204/255)
-  color_ppi = (127/255, 127/255, 127/255)
-  color_bti = (204/255, 0/255, 0/255)
+  if flags['ppi']:
+    file_ppi = 'inv_ppi.dat'
+    color_ppi = (127/255, 127/255, 127/255)
+    alpha_ppi = 0.3
+    ppi = read_inversion(file_ppi,'temp','ppi',tmin,tmax)
+    pppi = create_polygon(ppi,color_ppi,alpha_ppi)
 
-  alpha_svd = 0.3
-  alpha_ppi = 0.3
-  alpha_bti = 0.2
-
-
-  svd = read_inversion(file_svd,'temp','svd',tmin,tmax)
-  ppi = read_inversion(file_ppi,'temp','ppi',tmin,tmax)
-  bti = read_inversion(file_bti,'temp','bti',tmin,tmax)
-
-
-  psvd = create_polygon(svd,color_svd,alpha_svd)
-  pppi = create_polygon(ppi,color_ppi,alpha_ppi)
-  pbti = create_polygon(bti,color_bti,alpha_bti)
+  if flags['bti']:
+    file_bti = 'inv_bti.dat'
+    color_bti = (204/255, 0/255, 0/255)
+    alpha_bti = 0.2
+    bti = read_inversion(file_bti,'temp','bti',tmin,tmax)
+    pbti = create_polygon(bti,color_bti,alpha_bti)
 
 
   fig = plt.figure()
   fig, ax = plt.subplots(figsize=(6,3))
 
-  ax.add_patch(psvd)
-  ax.add_patch(pppi)
-  ax.add_patch(pbti)
+  if flags['svd']:
+    ax.add_patch(psvd)
 
-  ax.plot(svd[:,0],svd[:,2],color=color_svd,label='SVD')
-  ax.plot(ppi[:,0],ppi[:,2],color=color_ppi,label='PPI')
-  ax.plot(bti[:,0],bti[:,2],color=color_bti,label='BTI')
+  if flags['ppi']:
+    ax.add_patch(pppi)
+
+  if flags['bti']:
+    ax.add_patch(pbti)
+
+  if flags['svd']:
+    ax.plot(svd[:,0],svd[:,2],color=color_svd,label='SVD')
+
+  if flags['ppi']:
+    ax.plot(ppi[:,0],ppi[:,2],color=color_ppi,label='PPI')
+
+  if flags['bti']:
+    ax.plot(bti[:,0],bti[:,2],color=color_bti,label='BTI')
 
 
   ax.set_xlabel('Years C.E.')
   ax.set_ylabel('Temperature Change ($^{\circ}$C)')
 
-  svd_line = mlines.Line2D([],[],color=color_svd,label='SVD')
-  ppi_line = mlines.Line2D([],[],color=color_ppi,label='PPI')
-  bti_line = mlines.Line2D([],[],color=color_bti,label='BTI')
-  ax.legend(loc='upper left',handles=[svd_line, ppi_line, bti_line])
+  ax.legend(loc='upper left'))
 
   fig.tight_layout()
   fig.savefig('test_fig.pdf',format='pdf')

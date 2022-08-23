@@ -126,7 +126,7 @@ program test_bti
 
   call book%record(pname,trace,'Create the BTI object')
   call inv%new(az1,az2,logs,logy,n_b,nthreads,eigen,alpha,time_series,&
-      depth=depth,lambda=lambda)
+      depth=depth)
 
   call book%record(pname,trace,'Invert the anomaly')
   call inv%inversion()
