@@ -11,6 +11,7 @@ CIBOR has been tested using the `gfortran 9.4.0` compiler and `OpenMP 4.5` libra
 ___
 
 
+
 ## Test
 
 The CIBOR suite includes a test for each of its three mthods: Singular Value Decomposition inversion (SVD, Beltrami et al., 2015), Perturbed Parameter Inversion (PPI, Cuesta-Valero et al., 2021), and Bootstrap Inversions (BTI, Cuesta-Valero et al., 2022).
@@ -134,7 +135,7 @@ ___
 
 Reading and extracting relevant fields denoted with the character `#` with `bash` is as easy as executing the following code in a terminal:
 
-```
+```console
 cat inversion_file.dat | grep -w "#field" | awk 'for (i=2;i<=NF;i++) printf $i " ";
     print ""}'> final_file.dat
 ```
@@ -143,7 +144,7 @@ cat inversion_file.dat | grep -w "#field" | awk 'for (i=2;i<=NF;i++) printf $i "
 
 Extracting the values of a certain filed denoted with a `#` character in python is also simple. For example, if you are interested in the retrieved goundsurface temperature history from the bootstrap inversion, you can add to your script the following code:
 
-```
+```python
 data=open('file.dat')
   data = data.readlines()
   temp1 = []
@@ -165,7 +166,7 @@ data=open('file.dat')
 
 Similarly to python, if you want to read the ground surface temperature history from the bootstrap inversion to be used in a julia script, you just need to add to your julia script the following code:
 
-```
+```julia
 using DelimitedFiles
 run(pipeline(`grep -w "gtemp" file.dat`, "final_file.dat"))
 data = readdlm("final_file.dat")
@@ -174,7 +175,11 @@ ___
 
 ## Versions
 
-Version 1.0.0 - July 2022
+Version 0.0.0 - June 2022
+
+Version 0.1.0 - August 2022
+
+Version 0.1.1 -August 2022
 
 
 ___
@@ -184,6 +189,24 @@ ___
 
 This project is licensed under the MIT License. See also the [LICENSE](LICENSE) file.
 
+
+
+___
+
+
+# How to Cite
+
+Please, cite this code as:
+
+```
+@misc{cibor,
+    title={{CIBOR}: {C}odes for {I}nverting 
+    {BOR}eholes},
+    author={{C}uesta-{V}alero, {F}. {J}.},
+    booktitle={{G}it{H}ub},
+    year={2022}
+}
+```
 
 ___
 
