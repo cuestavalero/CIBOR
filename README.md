@@ -181,6 +181,8 @@ Version 0.1.0 - August 2022
 
 Version 0.1.1 -August 2022
 
+Version 0.1.2 -August 2022
+
 
 ___
 
@@ -200,8 +202,7 @@ Please, cite this code as:
 
 ```
 @misc{cibor,
-    title={{CIBOR}: {C}odes for {I}nverting 
-    {BOR}eholes},
+    title={{CIBOR}: {C}odes for {I}nverting {BOR}eholes},
     author={{C}uesta-{V}alero, {F}. {J}.},
     booktitle={{G}it{H}ub},
     year={2022}
