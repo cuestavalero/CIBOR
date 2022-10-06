@@ -82,6 +82,7 @@ contains
     class(ensemble_type), intent(in) :: other
 
     integer(iprec) :: ncol, nrow ! Dummy integers
+    integer(iprec) :: i ! Dummy indices
 
     character(len=*), parameter :: pname="mod_ensembles < copy_ensemble"
 
@@ -144,16 +145,18 @@ contains
 
   end subroutine add_member
 
-  subroutine mean_rows(self,means,nmem)
+  subroutine mean_rows(self,means,nmem,coeff)
     ! Subroutine to estimate the average of each row of an ensemble
     ! - self :: ensemble (ensemble)
     ! - means :: array with the averages of each row
-    ! - members employed in analysis (optional, real)
+    ! - nmem :: employed in analysis (optional, real)
+    ! - coeff :: coefficients to weight the mean (optional, real)
     class(ensemble_type), intent(in) :: self
     real(rprec), allocatable, intent(out) :: means(:)
     real(rprec), optional, allocatable, intent(out) :: nmem(:)
+    real(rprec), optional, allocatable, intent(in) :: coeff(:)
 
-    real(rprec) :: s ! Dummy real
+    real(rprec) :: s, c ! Dummy real
     integer(iprec) :: nrow, ncol, n ! Dummy integers
     integer(iprec) :: i,j ! Dummy indices
 
@@ -180,36 +183,68 @@ contains
       allocate(means(nrow))
     end if
 
-    do i = 1, nrow
-      s = 0.0_rprec
-      n = 0_iprec
-      do j = 1, ncol
-        if(self%ensemble(i,j).ne.self%fils) then
-          s = s + self%ensemble(i,j)
-          n = n + 1_iprec
+    if(present(coeff)) then
+      if(size(coeff).ne.ncol) then
+        call book%record(pname,error, "ERROR - size of coeff is not equal to&
+                                       & the number of cols")
+        stop
+      end if
+
+      do i = 1, nrow
+        c = 0.0_rprec
+        s = 0.0_rprec
+        n = 0_iprec
+        do j = 1, ncol
+          if(self%ensemble(i,j).ne.self%fils) then
+            s = s + coeff(j) * self%ensemble(i,j)
+            c = c + coeff(j)
+            n = n + 1_iprec
+          end if
+        end do
+        if(n.eq.0_iprec) then
+          means(i) = self%fils
+          if(present(nmem)) nmem(i) = 0.0_rprec
+        else
+          means(i) = s / c
+          if(present(nmem)) nmem(i) = real(n,rprec)
         end if
       end do
-      if(n.eq.0_iprec) then
-        means(i) = self%fils
-        if(present(nmem)) nmem(i) = 0.0_rprec
-      else
-        means(i) = s / real(n,rprec)
-        if(present(nmem)) nmem(i) = real(n,rprec)
-      end if
-    end do
+
+    else
+      do i = 1, nrow
+        s = 0.0_rprec
+        n = 0_iprec
+        do j = 1, ncol
+          if(self%ensemble(i,j).ne.self%fils) then
+            s = s + self%ensemble(i,j)
+            n = n + 1_iprec
+          end if
+        end do
+        if(n.eq.0_iprec) then
+          means(i) = self%fils
+          if(present(nmem)) nmem(i) = 0.0_rprec
+        else
+          means(i) = s / real(n,rprec)
+          if(present(nmem)) nmem(i) = real(n,rprec)
+        end if
+      end do
+    end if
 
     return
   end subroutine mean_rows
 
-  subroutine mean_cols(self,means,nmem)
+  subroutine mean_cols(self,means,nmem,coeff)
     ! Subroutine to estimate the average of each column of an ensemble
     ! - self :: ensemble (ensemble)
     ! - means :: array with the averages of each column
+    ! - nmem :: employed in analysis (optional, real)
+    ! - coeff :: coefficients to weight the mean (optional, real)
     class(ensemble_type), intent(in) :: self
     real(rprec), allocatable, intent(out) :: means(:)
     real(rprec), optional, allocatable, intent(out) :: nmem(:)
+    real(rprec), optional, allocatable, intent(in) :: coeff(:)
 
-    real(rprec) :: s ! Dummy real
+    real(rprec) :: s, c ! Dummy real
     integer(iprec) :: nrow, ncol, n ! Dummy integers
     integer(iprec) :: i,j ! Dummy indices
 
@@ -236,23 +271,52 @@ contains
       allocate(means(ncol))
     end if
 
-    do j = 1, ncol
-      s = 0.0_rprec
-      n = 0_iprec
-      do i = 1, nrow
-        if(self%ensemble(i,j).ne.self%fils) then
-          s = s + self%ensemble(i,j)
-          n = n + 1_iprec
+    if(present(coeff)) then
+      if(size(coeff).ne.nrow) then
+        call book%record(pname,error, "ERROR - size of coeff is not equal to&
+                                       & the number of row")
+        stop
+      end if
+
+      do j = 1, ncol
+        s = 0.0_rprec
+        c = 0.0_rprec
+        n = 0_iprec
+        do i = 1, nrow
+          if(self%ensemble(i,j).ne.self%fils) then
+            s = s + coeff(i) * self%ensemble(i,j)
+            c = c + coeff(i)
+            n = n + 1_iprec
+          end if
+        end do
+        if(n.eq.0_iprec) then
+          means(j) = self%fils
+          if(present(nmem)) nmem(j) = 0.0_rprec
+        else
+          means(j) = s / c
+          if(present(nmem)) nmem(j) = real(n,rprec)
         end if
       end do
-      if(n.eq.0_iprec) then
-        means(j) = self%fils
-        if(present(nmem)) nmem(j) = 0.0_rprec
-      else
-        means(j) = s / real(n, rprec)
-        if(present(nmem)) nmem(j) = real(n,rprec)
-      end if
-    end do
+
+    else
+      do j = 1, ncol
+        s = 0.0_rprec
+        n = 0_iprec
+        do i = 1, nrow
+          if(self%ensemble(i,j).ne.self%fils) then
+            s = s + self%ensemble(i,j)
+            n = n + 1_iprec
+          end if
+        end do
+        if(n.eq.0_iprec) then
+          means(j) = self%fils
+          if(present(nmem)) nmem(j) = 0.0_rprec
+        else
+          means(j) = s / real(n,rprec)
+          if(present(nmem)) nmem(j) = real(n,rprec)
+        end if
+      end do
+    end if
 
     return
   end subroutine mean_cols

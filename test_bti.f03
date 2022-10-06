@@ -67,7 +67,7 @@ program test_bti
   character(len=180), allocatable :: logs(:) ! List of boreholes
 
   ! Logging year of the profiles
-  real(rprec), allocatable :: logy(:)
+  real(rprec), allocatable :: logy(:), coeff(:)
 
   ! Constants
   real(rprec), parameter :: cu = 3600.0_rprec * 24.0_rprec * 365.25_rprec
@@ -86,8 +86,10 @@ program test_bti
   nbore=1
   allocate(logs(nbore))
   allocate(logy(nbore))
+  allocate(coeff(nbore))
   logs(1) = "profile"
   logy(1) = 2021.0_rprec
+  coeff(1) = 0.5_rprec
 
 
   call book%record(pname,trace, 'Create time series for surface history')
@@ -126,7 +128,7 @@ program test_bti
 
   call book%record(pname,trace,'Create the BTI object')
   call inv%new(az1,az2,logs,logy,n_b,nthreads,eigen,alpha,time_series,&
-      depth=depth)
+      depth=depth,coeff=coeff)
 
   call book%record(pname,trace,'Invert the anomaly')
   call inv%inversion()

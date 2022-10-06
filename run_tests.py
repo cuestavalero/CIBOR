@@ -135,7 +135,7 @@ def plot_inversions(flags):
   ax.set_xlabel('Years C.E.')
   ax.set_ylabel('Temperature Change ($^{\circ}$C)')
 
-  ax.legend(loc='upper left'))
+  ax.legend(loc='upper left')
 
   fig.tight_layout()
   fig.savefig('test_fig.pdf',format='pdf')

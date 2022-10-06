@@ -17,13 +17,13 @@ ___
 The CIBOR suite includes a test for each of its three mthods: Singular Value Decomposition inversion (SVD, Beltrami et al., 2015), Perturbed Parameter Inversion (PPI, Cuesta-Valero et al., 2021), and Bootstrap Inversions (BTI, Cuesta-Valero et al., 2022).
 
 
-Each test produce the inversion of the subsurface temperature profile located in `data/`. Just set the corresponding flag to `True` in the script `run_test.py` to obtain the inversion of the test profile. If you want to plot the results, set the `plots` flag to `True` in the same script.
+Each test produce the inversion of the subsurface temperature profile located in `data/`. Just set the corresponding flag to `True` in the script `run_tests.py` to obtain the inversion of the test profile. If you want to plot the results, set the `plots` flag to `True` in the same script.
 
 
 You can execute the tests using a `python3` compiler:
 
 ```
-python3 run_test.py
+python3 run_tests.py
 
 ```
 
@@ -135,7 +135,7 @@ ___
 
 Reading and extracting relevant fields denoted with the character `#` with `bash` is as easy as executing the following code in a terminal:
 
-```console
+```sh
 cat inversion_file.dat | grep -w "#field" | awk 'for (i=2;i<=NF;i++) printf $i " ";
     print ""}'> final_file.dat
 ```
@@ -179,10 +179,11 @@ Version 0.0.0 - June 2022
 
 Version 0.1.0 - August 2022
 
-Version 0.1.1 -August 2022
+Version 0.1.1 - August 2022
 
-Version 0.1.2 -August 2022
+Version 0.1.2 - August 2022
 
+Version 1.0.0 - October 2022
 
 ___
 
@@ -200,12 +201,29 @@ ___
 
 Please, cite this code as:
 
+```bibtex
+@article{cuesta-valero2022cibor100,
+  author  = {Cuesta-Valero, F. J. and Beltrami, H. and Gruber, S. and Garc\'{\i}a-Garc\'{\i}a, A. and Gonz\'{a}lez-Rouco, J. F.},
+  journal = {Geoscientific Model Development Discussions},
+  title   = {A new bootstrap technique to quantify uncertainty in estimates of ground surface temperature and ground heat flux histories from geothermal data},
+  year    = {2022},
+  pages   = {1--32},
+  volume  = {2022},
+  doi     = {10.5194/gmd-2022-178},
+  url     = {https://gmd.copernicus.org/preprints/gmd-2022-178/},
 ```
-@misc{cibor,
-    title={{CIBOR}: {C}odes for {I}nverting {BOR}eholes},
-    author={{C}uesta-{V}alero, {F}. {J}.},
-    booktitle={{G}it{H}ub},
-    year={2022}
+
+In case the citation is not for a scientific publication:
+
+```bibtex
+@software{cibor100,
+  author  = {Cuesta-Valero, Francisco Jose},
+  doi     = {10.5281/zenodo.1234},
+  title   = {{CIBOR}: {C}odes for {I}nverting {BOR}eholes},
+  url     = {https://github.com/cuestavalero/CIBOR},
+  version = {1.0.0},
+  year    = {2022},
+  month   = {10},
 }
 ```
 
@@ -215,7 +233,7 @@ ___
 
 - Beltrami H., Matharoo G.S., and Smerdon J.E.: Ground surface temperature and continental heat gain: uncertainties from underground. *Environmental Research Letters*, **10**, 014009, doi:10.1088/1748-9326/10/1/014009, 2015.
 
-- Cuesta-Valero, F. J., Beltrami, H., Gruber, S., Garcı́a-Garcı́a, A. & González-Rouco, J. F.: A new bootstrap technique to quantify uncertainty in estimates of ground surface temperature and ground heat flux histories from geothermal data. Submitted to *Climate of the Past*, 2022.
+- Cuesta-Valero, F. J., Beltrami, H., Gruber, S., Garcı́a-Garcı́a, A. & González-Rouco, J. F.: A new bootstrap technique to quantify uncertainty in estimates of ground surface temperature and ground heat flux histories from geothermal data. *Geoscientific Model Development*, doi:10.5194/gmd-2022-178, 2022.
 
 - Cuesta-Valero F.J., García-García A., Beltrami H., González-Rouco J.F., and García-Bustamante E.: Long-term global ground heat flux and continental heat storage from geothermal data. *Climate of the Past*, **17**, 451-468, doi:10.5194/cp-17-451-2021, 2021.
 

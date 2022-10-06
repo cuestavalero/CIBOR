@@ -1,12 +1,12 @@
 cff-version: 1.2.0
-message: "Please, cite this code as:"
+message: "If you use this software, please cite it as below."
 authors:
   - family-names: "Cuesta-Valero"
     given-names: "Francisco Jose"
     orcid: "https://orcid.org/0000-0003-1577-671X"
 title: "CIBOR: Codes for Inverting BOReholes"
-version: 0.1.1
-doi: 10.5281/zenodo.1234
-date-released: 2022-08-23
+version: 1.0.0
+doi: 10.5281/zenodo.7017521
+date-released: 2022-10-06
 url: "https://github.com/cuestavalero/CIBOR"
 

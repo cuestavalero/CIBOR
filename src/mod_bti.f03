@@ -42,6 +42,8 @@ module bti_module
     character(180), allocatable :: logs(:)
     ! Logging yeras [CE]
     real(rprec), allocatable :: logy(:)
+    ! EDOF coefficients [1]
+    real(rprec), allocatable :: coeff(:)
     ! Eigenvalues [1]
     integer(iprec), allocatable :: eigen(:)
     ! Thermal diffusivities [m2 s-1]
@@ -116,7 +118,7 @@ contains
   ! Standard ADT Methods. Construction, Destruction, Copying, and Assignment.
   ! ------------------------
   subroutine new_bti(self,az1,az2,logs,logy,n_total,n_threads,eigen,&
-      alpha,time_series,depth,lambda,population,means)
+      alpha,time_series,depth,lambda,coeff,population,means)
     ! Subroutine to initialize the BTI object
     ! - self :: object to be initialized (bti)
     ! - logs :: names for the logs to be considered (char(:))
@@ -129,7 +131,6 @@ contains
     ! - time_series :: time steps for surface signal (real(:))
     ! - depth :: synthetic profile for forward models (real(:))
     ! - lambda :: thermal conductivities to be considered (real(:))
-    ! - land :: land surface considered (real)
     class(bti_type), intent(out) :: self
     integer(iprec), intent(in) :: n_total
     integer(iprec), intent(in) :: n_threads
@@ -141,6 +142,7 @@ contains
     real(rprec), allocatable, intent(in) :: time_series(:)
     real(rprec), allocatable, optional, intent(in) :: depth(:)
     real(rprec), allocatable, optional, intent(in) :: lambda(:)
+    real(rprec), allocatable, optional, intent(in) :: coeff(:)
     integer(iprec), allocatable, optional, intent(in) :: population(:)
     logical, optional, intent(in) :: means
 
@@ -157,6 +159,7 @@ contains
     self%time_series = time_series
     if(present(depth)) self%depth = depth
     if(present(lambda)) self%lambda = lambda
+    if(present(coeff)) self%coeff = coeff
     if(present(population)) self%population = population
     if(present(means)) self%means = means
 
@@ -183,6 +186,7 @@ contains
     self%means = other%means
     if(allocated(other%depth)) self%depth = other%depth
     if(allocated(other%lambda)) self%lambda = other%lambda
+    if(allocated(other%coeff)) self%coeff = other%coeff
     if(allocated(other%population)) self%population = other%population
 
     return
@@ -200,6 +204,7 @@ contains
     if(allocated(self%time_series)) deallocate(self%time_series)
     if(allocated(self%depth)) deallocate(self%depth)
     if(allocated(self%lambda)) deallocate(self%lambda)
+    if(allocated(self%coeff)) deallocate(self%coeff)
     if(allocated(self%hist)) deallocate(self%hist)
     if(allocated(self%logyear)) deallocate(self%logyear)
     if(allocated(self%general_temp)) deallocate(self%general_temp)
@@ -440,7 +445,11 @@ contains
 
 
         call book%record(pname,debug,'Save mean to principal ensemble')
-        call ensemble%mean_cols(gst)
+        if(allocated(self%coeff)) then
+          call ensemble%mean_cols(gst,coeff=self%coeff)
+        else
+          call ensemble%mean_cols(gst)
+        end if
         principal(ii,:) = gst
         deallocate(gst)
 
@@ -463,7 +472,11 @@ contains
 
 
         if(allocated(self%depth)) then
-          call ensemble_fm%mean_cols(gst)
+          if(allocated(self%coeff)) then
+            call ensemble_fm%mean_cols(gst,coeff=self%coeff)
+          else
+            call ensemble_fm%mean_cols(gst)
+          end if
           principal_fm(ii,:) = gst
           deallocate(gst)
 
@@ -491,7 +504,11 @@ contains
 
 
         if(allocated(self%lambda)) then
-          call fensemble%mean_cols(gst)
+          if(allocated(self%coeff)) then
+            call fensemble%mean_cols(gst,coeff=self%coeff)
+          else
+            call fensemble%mean_cols(gst)
+          end if
           fprincipal(ii,:) = gst
 
           ! Save some populations to check quality of inversions
@@ -514,7 +531,11 @@ contains
 
 
           if(allocated(self%depth)) then
-            call fensemble_fm%mean_cols(gst)
+            if(allocated(self%coeff)) then
+              call fensemble_fm%mean_cols(gst,coeff=self%coeff)
+            else
+              call fensemble_fm%mean_cols(gst)
+            end if
             fprincipal_fm(ii,:) = gst
             deallocate(gst)
 
